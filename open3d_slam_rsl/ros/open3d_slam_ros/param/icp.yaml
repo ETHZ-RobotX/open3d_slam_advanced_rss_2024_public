@@ -1,0 +1,46 @@
+# See https://github.com/anybotics/libpointmatcher/blob/master/doc/Datafilters.md
+
+readingDataPointsFilters:
+#  - RandomSamplingDataPointsFilter:
+#      prob: 0.35
+
+referenceDataPointsFilters:
+#  - RandomSamplingDataPointsFilter:
+#      prob: 0.25
+
+matcher:
+  KDTreeMatcher:
+    knn: 3              # 1
+    maxDist: 0.5        # 0.5
+    epsilon: 0.01       # 0.01
+
+outlierFilters:
+#  - MaxDistOutlierFilter:
+#     maxDist: 1.0
+  - TrimmedDistOutlierFilter:
+     ratio: 0.90         # 0.9
+  - SurfaceNormalOutlierFilter:
+     maxAngle: 1.57     # 1.57
+
+errorMinimizer:
+  PointToPlaneErrorMinimizer
+#  PointToPlaneWithCovErrorMinimizer
+
+transformationCheckers:
+  - DifferentialTransformationChecker:
+      minDiffRotErr: 0.001    # 0.001
+      minDiffTransErr: 0.01   # 0.01
+      smoothLength: 3         # 3
+  - CounterTransformationChecker:
+      maxIterationCount: 30   # 30 
+#  - BoundTransformationChecker:
+#      maxRotationNorm: 0.80
+#      maxTranslationNorm: 5.0
+
+inspector:
+#  VTKFileInspector
+  NullInspector
+
+logger:
+#  FileLogger
+  NullLogger

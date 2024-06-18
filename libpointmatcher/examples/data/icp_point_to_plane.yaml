@@ -1,0 +1,33 @@
+# See https://github.com/anybotics/libpointmatcher/blob/master/doc/
+
+readingDataPointsFilters: {}
+
+referenceDataPointsFilters: {}
+
+matcher:
+  MirrorMatcher
+
+outlierFilters: {}
+
+errorMinimizer:
+  PointToPlaneErrorMinimizer
+
+transformationCheckers:
+  - DifferentialTransformationChecker:
+      minDiffRotErr: 0.00001
+      minDiffTransErr: 0.0001
+      smoothLength: 3
+  - CounterTransformationChecker:
+      maxIterationCount: 30
+
+inspector:
+  NullInspector
+  # VTKFileInspector:
+  #   baseFileName: <your_path>/debug- 
+  #   dumpDataLinks: 1 
+  #   dumpReading: 1
+  #   dumpReference: 1 
+  #   writeBinary: 1
+
+logger:
+  NullLogger

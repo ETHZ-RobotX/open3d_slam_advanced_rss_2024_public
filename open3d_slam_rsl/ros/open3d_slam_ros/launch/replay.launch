@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+  <!-- Arguments -->
+  <arg name="use_sim_time" default="true"/>
+  <arg name="is_read_from_rosbag" default="true"/>
+  <arg name="launch_prefix" default="" doc="gdb -ex run --args"/>
+  <arg name="launch_rviz" default="true"/>
+  <arg name="load_params" default="y" doc="y , n"/>
+  <arg name="robot_description_file_path" default="/home/tutuna/journal_results_data/all_datasets_used_for_tro/EXTRA/hongg_mission_4_replayed.yaml"/>
+  <arg name="cloud_topic" default="/rslidar_points"/>
+  
+  <!-- These options does not matter for replaying. -->
+  <arg name="odometry_topic" default=""/>
+  <arg name="pose_stamped_topic" default=""/>
+  <arg name="pose_stamped_with_covariance_topic" default=""/>
+
+  <!-- Replay Options -->
+  <arg name="parameter_filename" default="param_replay.lua"/>
+  <arg name="parameter_folder_path" default="$(find open3d_slam_ros)/param/"/>
+  <arg name="map_saving_folder" default="$(find open3d_slam_ros)/data/maps/"/>
+  <arg name="num_accumulated_range_data" default="1"/>
+  
+  <!-- Replay Options -->
+  <arg name="rosbag_filepath" default=""/>
+
+  <!-- If your odometry is absolutely syncronized with point clouds. -->
+  <arg name="use_syncronized_poses_to_replay" default="false"/>
+
+  <!-- If you want to re-publish the /tf topic of the bag -->
+  <arg name="republish_tf_topic" default="true"/>
+
+  <!-- The odometry topic of type <nav_msgs::odometry> to use for external odometry if enabled in config. -->
+  <!-- geometry_msgs/PoseWithCovarianceStamped or nav_msgs/Odometry supported. -->
+  <arg name="async_pose_topic" default="/graph_msf/est_odometry_odom_imu"/>
+
+  <!-- If you to sleep between steps. -->
+  <arg name="relative_sleep_duration" default="0.0"/>
+  <arg name="replay_start_time_as_second" default="0.0"/>
+  <arg name="replay_end_time_as_second" default="2000.0"/>
+
+  <!-- IMPORTANT: the frame of the odometry its tracking.-->
+  <arg name="assumed_external_odometry_tracked_frame" default="imu"/> <!-- zed2i_base_link This is used to find the transformation to the "tracked_sensor_frame" -->
+  <arg name="export_imu_data" default="false"/> <!-- This is used to export the IMU data from the rosbag. Also sleeps 10s. -->
+
+  <!-- ROS Param -->
+  <param name="/use_sim_time" value="$(arg use_sim_time)"/>
+
+  <!-- Main Node -->
+  <node name="open3d_slam" pkg="open3d_slam_ros"
+        type="mapping_node" output="screen"
+        launch-prefix="$(arg launch_prefix)">
+    <param name="cloud_topic" type="string" value="$(arg cloud_topic)"/>
+
+    <param name="odometry_topic" type="string" value="$(arg odometry_topic)"/>
+    <param name="pose_stamped_topic" type="string" value="$(arg pose_stamped_topic)"/>
+    <param name="pose_stamped_with_covariance_topic" type="string" value="$(arg pose_stamped_with_covariance_topic)"/>
+
+    <param name="parameter_folder_path" type="string"
+           value="$(arg parameter_folder_path)"/>
+
+    <param name="assumed_external_odometry_tracked_frame" type="string"
+           value="$(arg assumed_external_odometry_tracked_frame)"/>
+
+    <param name="async_pose_topic" type="string"
+           value="$(arg async_pose_topic)"/>
+
+    <param name="export_imu_data" type="bool"
+           value="$(arg export_imu_data)"/>
+
+    <param name="use_syncronized_poses_to_replay" type="bool"
+           value="$(arg use_syncronized_poses_to_replay)"/>
+
+    <param name="republish_tf_topic" type="bool"
+           value="$(arg republish_tf_topic)"/>
+
+    <param name="relative_sleep_duration" type="double"
+           value="$(arg relative_sleep_duration)"/>
+
+    <param name="replay_start_time_as_second" type="double"
+           value="$(arg replay_start_time_as_second)"/>
+
+    <param name="replay_end_time_as_second" type="double"
+           value="$(arg replay_end_time_as_second)"/>
+
+    <param name="parameter_filename" type="string"
+           value="$(arg parameter_filename)"/>
+    <param name="num_accumulated_range_data"
+           value="$(arg num_accumulated_range_data)"/>
+    <param name="is_read_from_rosbag" value="$(arg is_read_from_rosbag)"/>
+    <param name="rosbag_filepath" value="$(arg rosbag_filepath)"/>
+    <param name="map_saving_folder" value="$(arg map_saving_folder)"/>
+  </node>
+
+  <!-- Visualization -->
+  <arg name="rviz_config" default="$(find open3d_slam_ros)/rviz/replay.rviz"/>
+
+  <node name="rviz_replay_mapping" pkg="rviz" type="rviz"
+        args="-d $(arg rviz_config)"
+        if="$(arg launch_rviz)">
+  </node>
+
+  <!-- Robot Description & Parameter Loading -->
+  <group if="$(eval load_params == 'y')">
+       <rosparam command="load" file="$(arg robot_description_file_path)" />
+  </group>
+
+</launch>
