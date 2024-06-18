@@ -55,7 +55,8 @@ class SubmapCollection {
   size_t numLoopClosureCandidates() const;
   TimestampedSubmapIds popLoopClosureCandidates();
 
-  bool dumpToFile(const std::string& folderPath, const std::string& filename, const bool& isDenseMap) const;
+  bool dumpToFile(const std::string& folderPath, const std::string& filename, const bool& isDenseMap,
+                  const Transform& toCloudFrame = Transform::Identity()) const;
   void transform(const OptimizedTransforms& transformIncrements);
   void updateAdjacencyMatrix(const Constraints& loopClosureConstraints);
   const Constraints& getOdometryConstraints() const;

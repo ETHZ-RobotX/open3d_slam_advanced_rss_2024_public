@@ -79,8 +79,8 @@
       if="$(arg launch_rviz)">
   </include>
        
-  <!-- static_transform_publisher x y z yaw pitch roll frame_id child_frame_id period_in_ms -->
-  <node pkg="tf" type="static_transform_publisher" name="base_to_gps" args="0 0 0 0 3.14 0 map_o3d map_o3d_viz 1" />
+  <!-- static_transform_publisher x y z yaw pitch roll frame_id child_frame_id period_in_ms 
+  <node pkg="tf" type="static_transform_publisher" name="base_to_gps" args="0 0 0 0 3.14 0 map_o3d map_o3d_viz 1" />-->
 
 
 </launch>

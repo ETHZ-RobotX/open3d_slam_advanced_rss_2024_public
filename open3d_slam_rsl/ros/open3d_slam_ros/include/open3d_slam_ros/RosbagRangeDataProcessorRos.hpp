@@ -59,7 +59,7 @@ class RosbagRangeDataProcessorRos : public DataProcessorRos {
   bool iterateCloudAndPoseBuffers(o3dReplayBuffer& buffer);
   void drawLinesBetweenPoses(const nav_msgs::Path& path1, const nav_msgs::Path& path2, const ros::Time& stamp);
   bool validateTopicsInRosbag(const rosbag::Bag& bag, const std::vector<std::string>& mandatoryTopics);
-  bool readCalibrationIfNeeded();
+  bool readStaticTransformationIfNeeded();
   // bool run();
 
   std::optional<visualization_msgs::Marker> generateMarkersForSurfaceNormalVectors(const open3d::geometry::PointCloud& o3d_pc,

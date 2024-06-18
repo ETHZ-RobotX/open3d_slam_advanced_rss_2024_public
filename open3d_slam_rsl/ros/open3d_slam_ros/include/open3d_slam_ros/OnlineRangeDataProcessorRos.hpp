@@ -42,7 +42,7 @@ class OnlineRangeDataProcessorRos : public DataProcessorRos {
 
  private:
   void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg);
-  bool readCalibrationIfNeeded();
+  bool readStaticTransformationIfNeeded();
   void poseStampedCallback(const geometry_msgs::PoseStampedConstPtr& msg);
   void odometryCallback(const nav_msgs::OdometryConstPtr& msg);
   void poseStampedWithCovarianceCallback(const geometry_msgs::PoseWithCovarianceStampedConstPtr& msg);

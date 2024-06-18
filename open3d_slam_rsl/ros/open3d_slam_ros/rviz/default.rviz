@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /TF1/Frames1
         - /RegisteredCloud1/Autocompute Value Bounds1
         - /Scan2Map1/Shape1
         - /Scan2Map1/Covariance1
@@ -17,7 +18,6 @@ Panels:
       - /2D Pose Estimate1
       - /2D Nav Goal1
       - /Publish Point1
-      - /Center Frame1
     Name: Tool Properties
     Splitter Ratio: 0.5886790156364441
   - Class: rviz/Views
@@ -29,7 +29,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: AssembledMap
   - Class: rviz/Views
     Expanded:
       - /Current View1
@@ -77,10 +77,40 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz/TF
-      Enabled: false
+      Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
+        base_inertia:
+          Value: false
+        base_link:
+          Value: true
+        imu:
+          Value: false
+        imu_link:
+          Value: true
+        lidar_mount_link:
+          Value: false
+        map_o3d:
+          Value: true
+        odom_o3d:
+          Value: false
+        raw_rs_o3d:
+          Value: false
+        rgb_camera_link:
+          Value: false
+        rgb_camera_optical_link:
+          Value: false
+        rslidar:
+          Value: true
+        rslidar_base_link:
+          Value: false
+        top:
+          Value: false
+        tracking_camera_link:
+          Value: false
+        tracking_camera_pose_frame:
+          Value: false
       Marker Alpha: 1
       Marker Scale: 0.5
       Name: TF
@@ -88,9 +118,30 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        {}
+        base_link:
+          base_inertia:
+            {}
+          imu_link:
+            imu:
+              {}
+          lidar_mount_link:
+            rslidar_base_link:
+              rslidar:
+                map_o3d:
+                  raw_rs_o3d:
+                    {}
+                odom_o3d:
+                  {}
+          rgb_camera_link:
+            rgb_camera_optical_link:
+              {}
+          top:
+            {}
+          tracking_camera_link:
+            tracking_camera_pose_frame:
+              {}
       Update Interval: 0
-      Value: false
+      Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -159,8 +210,8 @@ Visualization Manager:
     - Alpha: 0.800000011920929
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 31.633544921875
-        Min Value: -16.322437286376953
+        Max Value: 2.360307455062866
+        Min Value: -0.4392338991165161
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -176,7 +227,7 @@ Visualization Manager:
       Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
-      Size (Pixels): 2
+      Size (Pixels): 5
       Size (m): 0.20000000298023224
       Style: Points
       Topic: /mapping/assembled_map
@@ -217,7 +268,8 @@ Visualization Manager:
       Marker Topic: /mapping/submap_origins
       Name: Submap Markers
       Namespaces:
-        {}
+        submap_0: true
+        submap_id_0: true
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -431,7 +483,7 @@ Visualization Manager:
       Length: 0.5
       Name: LiDAR_frame
       Radius: 0.10000000149011612
-      Reference Frame: lidar
+      Reference Frame: rslidar
       Value: true
     - Alpha: 1
       Class: rviz/Axes
@@ -453,7 +505,7 @@ Visualization Manager:
   Global Options:
     Background Color: 0; 0; 0
     Default Light: true
-    Fixed Frame: map_o3d_viz
+    Fixed Frame: map_o3d
     Frame Rate: 60
   Name: root
   Tools:
@@ -477,7 +529,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 29.82577896118164
+      Distance: 2.2365469932556152
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -485,17 +537,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.876513659954071
-        Y: -3.4012374877929688
-        Z: 5.328399181365967
+        X: 0
+        Y: 0
+        Z: 0
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.4147961139678955
-      Target Frame: lidar
-      Yaw: 2.9267616271972656
+      Pitch: 0.6653980016708374
+      Target Frame: rslidar
+      Yaw: 1.978586196899414
     Saved: ~
 Window Geometry:
   Displays:

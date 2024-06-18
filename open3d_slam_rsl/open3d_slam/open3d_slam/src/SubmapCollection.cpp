@@ -304,7 +304,8 @@ Constraints SubmapCollection::buildLoopClosureConstraints(const TimestampedSubma
   return retVal;
 }
 
-bool SubmapCollection::dumpToFile(const std::string& folderPath, const std::string& filename, const bool& isDenseMap) const {
+bool SubmapCollection::dumpToFile(const std::string& folderPath, const std::string& filename, const bool& isDenseMap,
+                                  const Transform& toCloudFrame) const {
   bool result = true;
   for (size_t i = 0; i < submaps_.size(); ++i) {
     PointCloud copy;
@@ -313,6 +314,7 @@ bool SubmapCollection::dumpToFile(const std::string& folderPath, const std::stri
     } else {
       copy = submaps_.at(i).getMapPointCloudCopy();
     }
+    copy.Transform(toCloudFrame.matrix());
     const std::string fullPath = folderPath + "/" + filename + "_" + std::to_string(i) + ".pcd";
     result = result && open3d::io::WritePointCloudToPCD(fullPath, copy, open3d::io::WritePointCloudOption());
   }

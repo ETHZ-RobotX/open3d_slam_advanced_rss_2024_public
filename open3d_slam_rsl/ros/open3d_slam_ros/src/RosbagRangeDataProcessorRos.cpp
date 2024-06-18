@@ -747,7 +747,7 @@ std::tuple<ros::WallDuration, ros::WallDuration, ros::WallDuration> RosbagRangeD
   return {std::make_tuple(odometryProcessingElapsed, mappingProcessingElapsed, loopclosureProcessingElapsed)};
 }
 
-bool RosbagRangeDataProcessorRos::readCalibrationIfNeeded() {
+bool RosbagRangeDataProcessorRos::readStaticTransformationIfNeeded() {
   if (slam_->useSyncedPoses_) {
     Eigen::Affine3d transform = Eigen::Affine3d::Identity();
     baseToLidarTransform_ = tf2::eigenToTransform(transform);
@@ -896,7 +896,7 @@ bool RosbagRangeDataProcessorRos::processRosbag() {
       // tracker = clockMessage->clock;
 
       // Spins once here.
-      if (!readCalibrationIfNeeded()) {
+      if (!readStaticTransformationIfNeeded()) {
         ROS_ERROR("Calibration failed to read. Exiting.");
         return false;
       }

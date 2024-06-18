@@ -29,7 +29,7 @@ void OnlineRangeDataProcessorRos::initialize() {
   slam_->loadParametersAndInitialize();
 }
 
-bool OnlineRangeDataProcessorRos::readCalibrationIfNeeded() {
+bool OnlineRangeDataProcessorRos::readStaticTransformationIfNeeded() {
   if (slam_->frames_.rangeSensorFrame == "default") {
     ROS_WARN_STREAM_THROTTLE(
         2.0, "Range sensor frame is not set yet (cloud didnt arrive yet). Delaying the transformation look-up. (Throttled 2s)");
@@ -37,7 +37,7 @@ bool OnlineRangeDataProcessorRos::readCalibrationIfNeeded() {
   }
 
   // The frames are identical. This is often not the case since the odometry follows a certain frame like base but the point clouds arrive
-  // in the lidar frame.
+  // in the their respective frame.
   if ((slam_->frames_.rangeSensorFrame == slam_->frames_.assumed_external_odometry_tracked_frame) || !slam_->isUsingOdometryTopic()) {
     slam_->setExternalOdometryFrameToCloudFrameCalibration(Eigen::Isometry3d::Identity());
     return true;
@@ -149,12 +149,12 @@ void OnlineRangeDataProcessorRos::staticTfCallback(const ros::TimerEvent&) {
     staticTfCallback_.stop();
   }
 
-  if (readCalibrationIfNeeded()) {
+  if (readStaticTransformationIfNeeded()) {
     // If IMU initialization is enabled we need to wait for the IMU callback to initialize the attitude.
     if (!slam_->isIMUattitudeInitializationEnabled()) {
       // This casts isometry3d to affine3d.
       Eigen::Affine3d eigenTransform = slam_->getExternalOdometryFrameToCloudFrameCalibration();
-      geometry_msgs::TransformStamped calibrationAsTransform = tf2::eigenToTransform(eigenTransform);
+      geometry_msgs::TransformStamped calibrationAsTransform = tf2::eigenToTransform(eigenTransform.inverse());
 
       geometry_msgs::PoseStamped odomPose;
 
@@ -166,19 +166,22 @@ void OnlineRangeDataProcessorRos::staticTfCallback(const ros::TimerEvent&) {
       tf2::doTransform(odomPose, odomPose_transformed, calibrationAsTransform);
 
       // odomPose_transformed.position=odomPose.position;
-      // odomPose_transformed.pose.orientation.w = 1.0;
-      // odomPose_transformed.pose.orientation.z = 0.0;
-      // odomPose_transformed.pose.orientation.y = 0.0;
-      // odomPose_transformed.pose.orientation.x = 0.0;
+      odomPose_transformed.pose.orientation.w = 1.0;
+      odomPose_transformed.pose.orientation.z = 0.0;
+      odomPose_transformed.pose.orientation.y = 0.0;
+      odomPose_transformed.pose.orientation.x = 0.0;
       ROS_INFO("Initial Transform is set. Nice. The rotation is enforced to be identity.");
 
-      // std::cout << " Initial Transform value PRE CALIB: " << "\033[92m" << o3d_slam::asString(latestOdomMeasurement.transform_) << "
-      // \n"
-      // << "\033[0m"; std::cout << " Initial Transform time: " << "\033[92m" << toString(latestOdomMeasurement.time_) << " \n" <<
-      // "\033[0m";
+      std::cout << " Initial Transform value PRE CALIB: "
+                << "\033[92m" << o3d_slam::asString(latestOdomMeasurement.transform_) << "\n "
+                << "\033[0m";
+      std::cout << " Initial Transform time: "
+                << "\033[92m" << toString(latestOdomMeasurement.time_) << " \n"
+                << "\033[0m";
 
       if (!slam_->isUseExistingMapEnabled()) {
-        slam_->setInitialTransform(o3d_slam::getTransform(odomPose_transformed.pose).matrix());
+        // slam_->setInitialTransform(o3d_slam::getTransform(odomPose_transformed.pose).matrix());
+        slam_->setInitialTransform(o3d_slam::getTransform(odomPose.pose).matrix());
       }
     }
 

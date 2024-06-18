@@ -432,8 +432,21 @@ void SlamWrapper::setInitialMap(const PointCloud& initialMap) {
 }
 
 void SlamWrapper::setInitialTransform(const Eigen::Matrix4d initialTransform) {
-  odometry_->setInitialTransform(initialTransform);
-  mapper_->setMapToRangeSensorInitial(Transform(initialTransform));
+  Transform forMap = Transform::Identity();
+  Eigen::Matrix4d temp = initialTransform * mapper_->calibration_.matrix().inverse();
+  // Convert the temp to quaternion rotation and linear translation
+  Eigen::Quaterniond q(temp.block<3, 3>(0, 0));
+  q.normalize();
+  Eigen::Vector3d t(temp.block<3, 1>(0, 3));
+
+  // Create an affine transformation
+  Eigen::Affine3d aff;
+  aff.linear() = q.toRotationMatrix();
+  aff.translation() = t;
+  forMap.matrix() = aff.matrix();
+
+  mapper_->setMapToRangeSensorInitial(forMap);
+  odometry_->setInitialTransform(forMap.matrix());
 }
 
 bool SlamWrapper::isInitialTransformSet() {
@@ -492,6 +505,24 @@ void SlamWrapper::stopWorkers() {
 // Save Regular Map
 bool SlamWrapper::saveMap(const std::string& directory) {
   PointCloud map = mapper_->getAssembledMapPointCloud();
+  // // Transform the map to the range sensor frame using the tf  transformation.
+  // if (!mapper_->isCalibrationSet_) {
+  //   return false;
+  // }
+  // // Transform the map to the range sensor frame using the tf  transformation.
+  // if (!mapper_->isCalibrationSet_) {
+  //   return false;
+  // }
+  // // Get the calibration transform.
+  // const Transform calibration = mapper_->calibration_;
+
+  // std::cout << "Transforming the map before saving. Might take a moment. \n";
+
+  // // Transform the map accordingly
+  // map.Transform(calibration.matrix().inverse());
+
+  // std::cout << "Finished transformation. Saving. \n";
+
   createDirectoryOrNoActionIfExists(directory);
   const std::string filename = directory + "map.pcd";
   return saveToFile(filename, map);
@@ -504,6 +535,7 @@ bool SlamWrapper::saveDenseSubmaps(const std::string& directory) {
 
 // Map saving API
 bool SlamWrapper::saveSubmaps(const std::string& directory, const bool& isDenseMap) {
+  // const Transform calibration = mapper_->calibration_.inverse();
   createDirectoryOrNoActionIfExists(directory);
   const std::string cloudName = isDenseMap ? "denseSubmap" : "submap";
   const bool savingResult = mapper_->getSubmaps().dumpToFile(directory, cloudName, isDenseMap);
