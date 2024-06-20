@@ -41,7 +41,7 @@ cd open_3d_slam_rsl/open3d_catkin/
 sudo apt install libgoogle-glog-dev libglfw3 libglfw3-dev liblua5.2-dev
 ``` 
 
-4. Install `libnabo` from Anybotics by cloning it to `catkin_ws/src`
+4. Install `libnabo` from Anybotics by cloning it to `catkin_ws/src`. Please don't install it with Debians.
 
 ```bash
 cd catkin_ws/src
@@ -59,7 +59,7 @@ catkin build open3d_slam_ros
 
 ## Use
 
-First make sure you have correct topics for LiDAR point cloud and pose prior external odometry.
+First, make sure you have the correct topics for the LiDAR point cloud and pose prior external odometry. Make sure to enter the tracked frame of the external odometry correctly.
 
 ```bash
 source devel/setup.sh
