@@ -2,7 +2,7 @@
 
 This project provides tools for robot **LiDAR-based mapping and localization**.
 
-This is an advanced and fine-tuned version of open3d_slam.
+This is an advanced and fine-tuned version of [open3d_slam](git@github.com:leggedrobotics/open3d_slam.git) and subject to it's license.
 
 ## Build
 For now to build this repository, you need to:
