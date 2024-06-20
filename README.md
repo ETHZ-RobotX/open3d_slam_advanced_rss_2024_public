@@ -1,8 +1,8 @@
-# open3d_slam_private
+# open3d_slam_advanced_rss_2024_public 
 
 This project provides tools for robot **LiDAR-based mapping and localization**.
 
-This is an advanced and fine-tuned version of open3d_slam that is private to RSL for internal projects and development.
+This is an advanced and fine-tuned version of open3d_slam.
 
 ## Build
 For now to build this repository, you need to:
@@ -14,7 +14,7 @@ Clone the repository to:
 ``` bash
 mkdir -p catkin_ws/src
 cd catkin_ws/src
-git clone git@github.com:leggedrobotics/open3d_slam_private.git
+git clone git@github.com:ETHZ-RobotX/open3d_slam_advanced_rss_2024_public.git
 ```
 
 1. Make sure your CMake > 3.18
