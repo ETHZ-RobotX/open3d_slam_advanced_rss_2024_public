@@ -7,12 +7,16 @@
   <arg name="launch_rviz" default="true"/>
   
   <!-- Point Cloud -->
-  <arg name="cloud_topic" default="/rslidar/points"/>
+       <!-- /rslidar_points -->
+       <!-- /rslidar/points -->
+
+       
+  <arg name="cloud_topic" default="/rslidar_points"/>
   
   <!-- The tracked frame of the External odometry. Transformation from this frame to tracked_sensor_Frame should exist. -->
   <!-- base_link  for VIO--> 
   <!-- imu  for VIO--> 
-  <arg name="assumed_external_odometry_tracked_frame" default="base_link"/>
+  <arg name="assumed_external_odometry_tracked_frame" default="imu"/>
 
   <!-- Currently only used for attitude initialization -->
   <arg name="imu_topic" default="/imu"/>
@@ -20,7 +24,8 @@
   <!-- Common Options:  -->
   <!-- /camera/odom/sample -->
   <!-- /graph_msf/est_odometry_odom_imu -->
-  <arg name="odometry_topic" default="/tracking_camera/odom/sample"/>
+  <!-- /tracking_camera/odom/sample -->
+  <arg name="odometry_topic" default="/graph_msf/est_odometry_odom_imu"/>
   
   <arg name="pose_stamped_topic" default="/point_cloud_filter/lidar_depth_camera/odometry_pose2"/>
   

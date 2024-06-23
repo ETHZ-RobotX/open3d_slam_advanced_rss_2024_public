@@ -279,7 +279,7 @@ bool Mapper::addRangeMeasurement(const Mapper::PointCloud& rawScan, const Time& 
     // Apply the calculated odometry motion to the previous scan2map refined pose.
     mapToRangeSensorEstimate = mapToRangeSensorPrev_ * odometryMotion;
 
-    if (odometryMotion.translation().norm() == 0.0) {
+    if (odometryMotion.matrix() == Transform::Identity().matrix()) {
       std::cout << " Odometry MOTION SHOULDNT BE PERFECTLY 0. "
                 << "\033[92m" << asString(odometryMotion) << " \n"
                 << "\033[0m";
