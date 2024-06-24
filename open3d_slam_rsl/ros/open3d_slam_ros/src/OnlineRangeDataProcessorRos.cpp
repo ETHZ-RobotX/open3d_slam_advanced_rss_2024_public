@@ -360,7 +360,7 @@ void OnlineRangeDataProcessorRos::processOdometry(const Transform& transform, co
   if (slam_->isUsingOdometryTopic()) {
     // Add pose to buffer
     if (!slam_->addOdometryPoseToBuffer(transform, timestamp)) {
-      ROS_ERROR_STREAM("Failed to add odometry pose to buffer. Exiting.");
+      ROS_WARN_STREAM("Failed to add odometry pose to buffer. Exiting.");
       return;
     }
 

@@ -9,8 +9,6 @@
   <!-- Point Cloud -->
        <!-- /rslidar_points -->
        <!-- /rslidar/points -->
-
-       
   <arg name="cloud_topic" default="/rslidar_points"/>
   
   <!-- The tracked frame of the External odometry. Transformation from this frame to tracked_sensor_Frame should exist. -->
