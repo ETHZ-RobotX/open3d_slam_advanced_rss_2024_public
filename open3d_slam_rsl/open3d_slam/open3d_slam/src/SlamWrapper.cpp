@@ -140,9 +140,13 @@ void SlamWrapper::appendPoseToBestGuessPath(geometry_msgs::PoseStamped transform
 }
 
 bool SlamWrapper::addOdometryPoseToBuffer(const Transform& transform, const Time& timestamp) const {
-  if (!(isUsingOdometryTopic()) || odometry_->odomToRangeSensorBuffer_.has(timestamp)) {
-    std::cout << "WARNING: you are trying to add an odometry pose to the buffer, but the buffer already has it! \n";
-    std::cout << "The timestamp is: " << toSecondsSinceFirstMeasurement(timestamp) << std::endl;
+  // if (!(isUsingOdometryTopic()) || odometry_->odomToRangeSensorBuffer_.has(timestamp)) {
+  //   std::cout << "WARNING: you are trying to add an odometry pose to the buffer, but the buffer already has it! \n";
+  //   std::cout << "The timestamp is: " << toSecondsSinceFirstMeasurement(timestamp) << std::endl;
+  //   return false;
+  // }
+
+  if (!(isUsingOdometryTopic())) {
     return false;
   }
 
