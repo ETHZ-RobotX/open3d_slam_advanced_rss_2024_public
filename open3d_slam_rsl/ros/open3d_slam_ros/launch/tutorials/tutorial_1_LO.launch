@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+  <arg name="use_sim_time" default="true"/>
+
+  <!-- Arguments -->
+  <arg name="launch_prefix" default="" doc="gdb -ex run --args , valgrind --leak-check=full"/>
+    <arg name="rviz_config" default="$(find  open3d_slam_ros)/rviz/tutorial_1.rviz"/>
+  <arg name="launch_rviz" default="true"/>
+  <arg name="launch_model" default="true"/>
+  
+  
+  <!-- Point Cloud -->
+       <!-- /rslidar_points -->
+       <!-- /rslidar/points -->
+  <arg name="cloud_topic" default="/rslidar/points"/>
+  
+  <!-- The tracked frame of the External odometry. Transformation from this frame to tracked_sensor_Frame should exist. -->
+  <!-- base_link  for VIO--> 
+  <!-- imu  for VIO--> 
+  <arg name="assumed_external_odometry_tracked_frame" default="empty_odometry_frame"/>
+
+  <!-- Currently only used for attitude initialization -->
+  <arg name="imu_topic" default="/imu"/>
+
+  <!-- Common Options:  -->
+  <!-- /camera/odom/sample -->
+  <!-- /graph_msf/est_odometry_odom_imu -->
+  <!-- /tracking_camera/odom/sample -->
+  <arg name="odometry_topic" default="empty_odometry"/>
+  <arg name="pose_stamped_topic" default="empty_pose_stamped"/>
+  <arg name="pose_stamped_with_covariance_topic" default="empty_pose_stamped_with_covariance"/>
+
+  <arg name="parameter_filename" default="tutorial_1_LO.lua"/>
+  <arg name="parameter_folder_path" default="$(find open3d_slam_ros)/param/"/>
+  <arg name="map_saving_folder" default="$(find open3d_slam_ros)/data/maps/"/>
+  <arg name="num_accumulated_range_data" default="1"/>
+
+  <!-- Replay Options -->
+  <arg name="is_read_from_rosbag" default="false"/>
+  <arg name="rosbag_filepath" default="/home/xyz.bag"/>
+  <arg name="use_syncronized_poses_to_replay" default="false"/>
+  <arg name="replay_start_time_as_second" default="0.0"/>
+  <arg name="replay_end_time_as_second" default="3000.0"/>
+
+  <!-- ROS Param -->
+  <param name="/use_sim_time" value="$(arg use_sim_time)"/>
+
+  <!-- Main Node -->
+  <node name="mapping" pkg="open3d_slam_ros"
+        type="mapping_node" output="screen"
+        launch-prefix="$(arg launch_prefix)">
+    <param name="cloud_topic" type="string" value="$(arg cloud_topic)"/>
+
+    <param name="odometry_topic" type="string" value="$(arg odometry_topic)"/>
+    <param name="pose_stamped_topic" type="string" value="$(arg pose_stamped_topic)"/>
+    <param name="pose_stamped_with_covariance_topic" type="string" value="$(arg pose_stamped_with_covariance_topic)"/>
+    <param name="parameter_folder_path" type="string"
+           value="$(arg parameter_folder_path)"/>
+    <param name="imu_topic" type="string" value="$(arg imu_topic)"/>
+    <param name="assumed_external_odometry_tracked_frame" type="string"
+           value="$(arg assumed_external_odometry_tracked_frame)"/>
+    <param name="use_syncronized_poses_to_replay" type="bool"
+           value="$(arg use_syncronized_poses_to_replay)"/>
+    <param name="replay_start_time_as_second" type="double"
+           value="$(arg replay_start_time_as_second)"/>
+    <param name="replay_end_time_as_second" type="double"
+           value="$(arg replay_end_time_as_second)"/>
+    <param name="parameter_filename" type="string"
+           value="$(arg parameter_filename)"/>
+    <param name="num_accumulated_range_data"
+           value="$(arg num_accumulated_range_data)"/>
+    <param name="is_read_from_rosbag" value="$(arg is_read_from_rosbag)"/>
+    <param name="rosbag_filepath" value="$(arg rosbag_filepath)"/>
+    <param name="map_saving_folder" value="$(arg map_saving_folder)"/>
+  </node>
+
+  <!-- Visualization -->
+  <node name="rviz_mapping" pkg="rviz" type="rviz"
+        args="-d $(arg rviz_config)"
+        if="$(arg launch_rviz)">
+  </node>
+
+  <!-- Robot Model -->
+  <include
+      file="$(find smb_description)/launch/load.launch"
+      if="$(arg launch_model)">
+  </include>
+       
+<node pkg="rosbag" type="play" name="player" output="screen" launch-prefix="xterm -bg lightblue -fg darkslategrey -bd plum -bw 10 -geometry 80x40-50+250 -fn -sony-fixed-medium-r-normal--24-170-100-100-c-120-iso8859-1 -e " args="--clock $(find open3d_slam_ros)/data/tutorial.bag"/>
+<node pkg="rostopic" type="rostopic" name="rate" output="screen" launch-prefix="xterm -bg lightseagreen -fg darkslategrey -bd plum -bw 10 -geometry 80x40-1200+250 -fn -sony-fixed-medium-r-normal--24-170-100-100-c-120-iso8859-1 -e " args="hz /mapping/scan2map_odometry -w 10"/>
+
+<!-- static_transform_publisher x y z yaw pitch roll frame_id child_frame_id period_in_ms-->
+<node pkg="tf" type="static_transform_publisher" name="rslidar_base_link_to_rslidar" args="0 0 0 0 0 0 rslidar rslidar_base_link 1" />
+
+</launch>

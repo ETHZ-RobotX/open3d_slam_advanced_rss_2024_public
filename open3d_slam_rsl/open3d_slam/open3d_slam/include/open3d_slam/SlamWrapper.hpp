@@ -86,7 +86,7 @@ class SlamWrapper {
   void setExternalOdometryFrameToCloudFrameCalibration(const Eigen::Isometry3d& transform);
 
   // Add an odometry msg to the pose buffer.
-  bool addOdometryPoseToBuffer(const Transform& transform, const Time& timestamp) const;
+  bool addOdometryPoseToBuffer(const Transform& transform, const Time& timestamp);
 
   // A getter for the IMU based initialization flag.
   bool isIMUattitudeInitializationEnabled();
@@ -147,6 +147,8 @@ class SlamWrapper {
   double bagReplayStartTime_ = 0.0;
   double bagReplayEndTime_ = 0.0;
   double relativeSleepDuration_ = 0.0;
+
+  int faultyOdometryCounter_ = -1;
 
   // The variable for asyncronized odometry pose msgs. Used for rosbag replay.
   std::string asyncOdometryTopic_{"/state_estimator/pose_in_odom"};

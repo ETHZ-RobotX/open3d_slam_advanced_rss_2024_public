@@ -280,9 +280,9 @@ bool Mapper::addRangeMeasurement(const Mapper::PointCloud& rawScan, const Time& 
     mapToRangeSensorEstimate = mapToRangeSensorPrev_ * odometryMotion;
 
     if (odometryMotion.matrix() == Transform::Identity().matrix()) {
-      std::cout << " Odometry MOTION SHOULDNT BE PERFECTLY 0. "
-                << "\033[92m" << asString(odometryMotion) << " \n"
-                << "\033[0m";
+      // std::cout << " Odometry MOTION SHOULDNT BE PERFECTLY 0. "
+      //           << "\033[92m" << asString(odometryMotion) << " \n"
+      //           << "\033[0m";
     }
 
     /*int64_t uts_timestamp = toUniversal(timestamp);

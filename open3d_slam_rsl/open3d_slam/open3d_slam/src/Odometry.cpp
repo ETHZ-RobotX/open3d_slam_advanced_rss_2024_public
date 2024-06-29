@@ -36,21 +36,31 @@ bool LidarOdometry::addRangeScan(const open3d::geometry::PointCloud& cloud, cons
     return true;
   }
 
-  if (timestamp < lastMeasurementTimestamp_) {
-    std::cerr << "\n\n !!!!! LIDAR ODOMETRY WARNING: Measurements came out of order!!!! This might happen at the beginning once. \n\n";
-    return false;
-  }
-
   // We return early if we don't need to employ scan2scan odometry.
   if (params_.useOdometryTopic_) {
     // std::cout << "Already an odometry measurement for this timestamp. Skipping" << std::endl;
     return true;
   }
 
+  if (timestamp < lastMeasurementTimestamp_) {
+    std::cerr << "\n\n !!!!! LIDAR ODOMETRY WARNING: Measurements came out of order!!!! This might happen at the beginning once. \n\n";
+    return false;
+  }
+
   const o3d_slam::Timer timer;
   auto preProcessed = preprocess(cloud);
 
   const auto result = cloudRegistration_->registerClouds(cloudPrev_, *preProcessed, Transform::Identity());
+
+  // I want to prevent big jumps in odometry and make isOdomOkay false based on result.transformation
+  Transform resT = Transform(result.transformation_);
+
+  if (resT.translation().norm() > 0.8) {
+    std::cout << "\033[33m"
+              << "LiDAR Odometry jumped more than 80cm. Skipping this estimation."
+              << "\033[0m" << std::endl;
+    return false;
+  }
 
   // todo magic
   const bool isOdomOkay = result.fitness_ > 0.1;

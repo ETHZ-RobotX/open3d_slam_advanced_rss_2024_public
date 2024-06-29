@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(open3d_catkin)
 
+add_compile_options(-Wno-dev)
+
 find_package(catkin REQUIRED)
 
 set(CATKIN_PACKAGE_DEPENDENCIES

@@ -175,8 +175,6 @@ Visualization Manager:
           Value: true
         map_o3d:
           Value: true
-        odom_o3d:
-          Value: true
         raw_rs_o3d:
           Value: true
         rgb_camera_link:
@@ -184,6 +182,8 @@ Visualization Manager:
         rgb_camera_optical_link:
           Value: true
         rslidar:
+          Value: true
+        rslidar_base_link:
           Value: true
         top:
           Value: true
@@ -217,7 +217,7 @@ Visualization Manager:
               map_o3d:
                 raw_rs_o3d:
                   {}
-              odom_o3d:
+              rslidar_base_link:
                 {}
           rgb_camera_link:
             rgb_camera_optical_link:
@@ -269,8 +269,8 @@ Visualization Manager:
     - Alpha: 0.800000011920929
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 9.887481689453125
-        Min Value: -2.916414737701416
+        Max Value: 9.225178718566895
+        Min Value: -0.9007316827774048
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -391,7 +391,7 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 138; 226; 52
-      Enabled: true
+      Enabled: false
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.009999999776482582
@@ -410,12 +410,12 @@ Visualization Manager:
       Shaft Length: 0.10000000149011612
       Topic: /mapping/best_guess_path_live
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
       Color: 32; 74; 135
-      Enabled: true
+      Enabled: false
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.009999999776482582
@@ -434,15 +434,15 @@ Visualization Manager:
       Shaft Length: 0.10000000149011612
       Topic: /mapping/tracked_path_live
       Unreliable: false
-      Value: true
+      Value: false
     - Class: rviz/Marker
-      Enabled: true
+      Enabled: false
       Marker Topic: /mapping/differenceLines
       Name: Motion Update Markers
       Namespaces:
-        paths: true
+        {}
       Queue Size: 100
-      Value: true
+      Value: false
     - Angle Tolerance: 0
       Class: rviz/Odometry
       Covariance:

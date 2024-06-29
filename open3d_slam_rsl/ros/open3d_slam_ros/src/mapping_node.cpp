@@ -17,9 +17,9 @@ int main(int argc, char* argv[0]) {
   using namespace o3d_slam;
 
   // apt-get install -y libgoogle-glog-dev
-  google::InitGoogleLogging(argv[0]);
-  FLAGS_alsologtostderr = true;
-  google::InstallFailureSignalHandler();
+  // google::InitGoogleLogging(argv[0]);
+  // FLAGS_alsologtostderr = true;
+  // google::InstallFailureSignalHandler();
 
   ros::init(argc, argv, "open3d_slam");
   ros::NodeHandlePtr nh(new ros::NodeHandle("~"));
