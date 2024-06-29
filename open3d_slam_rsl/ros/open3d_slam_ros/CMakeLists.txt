@@ -99,7 +99,17 @@ target_link_libraries(${PROJECT_NAME}
 add_executable(mapping_node
   src/mapping_node.cpp)
 
+  add_executable(visualizer_node
+  src/visualizer_node.cpp)
+  
 target_link_libraries(mapping_node
+  ${catkin_LIBRARIES}
+  ${gflags_LIBRARIES}
+  ${GLOG_LIBRARIES}
+  ${PROJECT_NAME}
+  )
+
+  target_link_libraries(visualizer_node 
   ${catkin_LIBRARIES}
   ${gflags_LIBRARIES}
   ${GLOG_LIBRARIES}
