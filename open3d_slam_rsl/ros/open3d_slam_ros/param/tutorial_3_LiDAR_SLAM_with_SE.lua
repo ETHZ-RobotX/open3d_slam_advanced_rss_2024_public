@@ -27,7 +27,7 @@ params.mapper_localizer.scan_to_map_registration.scan_processing.voxel_size = 0.
 params.mapper_localizer.scan_to_map_registration.scan_processing.downsampling_ratio = 1.0
 params.mapper_localizer.scan_to_map_registration.scan_processing.scan_cropping.cropping_radius_max = 15.0 --meters
 params.mapper_localizer.scan_to_map_registration.icp.max_correspondence_dist = 2.0 --NOT USED RIGHT NOW
-params.mapper_localizer.scan_to_map_registration.icp.knn = 5 --Currently only used for surface normal estimation.
+params.mapper_localizer.scan_to_map_registration.icp.knn = 10 --Currently only used for surface normal estimation.
 params.mapper_localizer.scan_to_map_registration.icp.max_distance_knn = 1.0 --Currently only used for surface normal estimation.
 params.mapper_localizer.scan_to_map_registration.icp.reference_cloud_seting_period = 2.0 --Seconds
 

@@ -4,7 +4,7 @@ include "default/default_parameters.lua"
 params = deepcopy(DEFAULT_PARAMETERS)
 
 --ScanToScan ODOMETRY
-params.odometry.scan_processing.voxel_size = 0.2
+params.odometry.scan_processing.voxel_size = 0.05
 params.odometry.scan_processing.downsampling_ratio = 1.0
 params.odometry.scan_processing.scan_cropping.cropping_radius_max = 40.0
 
@@ -27,7 +27,7 @@ params.mapper_localizer.scan_to_map_registration.scan_processing.voxel_size = 0.
 params.mapper_localizer.scan_to_map_registration.scan_processing.downsampling_ratio = 1.0
 params.mapper_localizer.scan_to_map_registration.scan_processing.scan_cropping.cropping_radius_max = 15.0 --meters
 params.mapper_localizer.scan_to_map_registration.icp.max_correspondence_dist = 2.0 --NOT USED RIGHT NOW
-params.mapper_localizer.scan_to_map_registration.icp.knn = 5 --Currently only used for surface normal estimation.
+params.mapper_localizer.scan_to_map_registration.icp.knn = 10 --Currently only used for surface normal estimation.
 params.mapper_localizer.scan_to_map_registration.icp.max_distance_knn = 1.0 --Currently only used for surface normal estimation.
 params.mapper_localizer.scan_to_map_registration.icp.reference_cloud_seting_period = 2.0 --Seconds
 
@@ -45,8 +45,8 @@ params.map_initializer.init_pose.yaw = 120.0
 --SUBMAP
 params.submap.submap_size = 15.0 --meters
 params.submap.adjacency_based_revisiting_min_fitness = 0.5
-params.submap.min_seconds_between_feature_computation = 10.0
-params.submap.submaps_num_scan_overlap = 5 -- 200
+params.submap.min_seconds_between_feature_computation = 5.0
+params.submap.submaps_num_scan_overlap = 15 -- 200
 params.submap.max_num_points = 250000
 
 --MAP_BUILDER
@@ -79,7 +79,7 @@ params.place_recognition.consistency_check.max_drift_y = 80.0 --m
 params.place_recognition.consistency_check.max_drift_z = 40.0 --m
 
 --MOTION_COMPENSATION
-params.motion_compensation.is_undistort_scan = false
+params.motion_compensation.is_undistort_scan = true
 params.motion_compensation.num_poses_vel_estimation = 3
 
 --SAVING

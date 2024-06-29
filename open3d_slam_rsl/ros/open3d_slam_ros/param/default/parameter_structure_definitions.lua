@@ -39,7 +39,7 @@ MOTION_COMPENSATION_PARAMETERS = {
 VISUALIZATION_PARAMETERS = {
   assembled_map_voxel_size = 0.05,
   submaps_voxel_size = 0.05,
-  visualize_every_n_msec = 250.0,
+  visualize_every_n_msec = 500.0,
 }
 
 GLOBAL_OPTIMIZATION_PARAMETERS = {
@@ -66,9 +66,9 @@ SCAN_PROCESSING_PARAMETERS = {
 
 ICP_PARAMETERS = {
   max_correspondence_dist= 1.0,
-  knn= 20,
+  knn= 10,
   max_distance_knn= 1.0,
-  max_n_iter= 50,
+  max_n_iter= 30,
   reference_cloud_seting_period= 1.0,
 }
 
@@ -99,6 +99,8 @@ SPACE_CARVING_PARAMETERS = {
   max_raytracing_length = 20.0,
   truncation_distance = 0.3,
   carve_space_every_n_scans= 10.0,
+  min_dot_product_with_normal = 0.5,
+  neigborhood_radius_for_removal= 0.1,
 }
 
 MAP_BUILDER_PARAMETERS = {

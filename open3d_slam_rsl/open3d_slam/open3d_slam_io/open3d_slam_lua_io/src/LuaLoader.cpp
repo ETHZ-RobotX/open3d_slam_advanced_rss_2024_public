@@ -385,6 +385,8 @@ void LuaLoader::loadParameters(const DictPtr dict, SpaceCarvingParameters *p){
 	loadDoubleIfKeyDefined(dict, "max_raytracing_length", &p->maxRaytracingLength_);
 	loadDoubleIfKeyDefined(dict, "truncation_distance", &p->truncationDistance_);
 	loadIntIfKeyDefined(dict, "carve_space_every_n_scans", &p->carveSpaceEveryNscans_);
+	loadDoubleIfKeyDefined(dict, "min_dot_product_with_normal", &p->minDotProductWithNormal_);
+	loadDoubleIfKeyDefined(dict, "neigborhood_radius_for_removal", &p->neighborhoodRadiusDenseMap_);
 }
 
 void LuaLoader::loadParameters(const DictPtr dict, Eigen::Isometry3d *T) {

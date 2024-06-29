@@ -129,7 +129,7 @@ void Submap::transform(const Transform& T) {
 
 void Submap::carve(const PointCloud& rawScan, const Transform& mapToRangeSensor, const CroppingVolume& cropper,
                    const SpaceCarvingParameters& params, PointCloud* map) {
-  if (map->points_.empty() || !(nScansInsertedMap_ % params.carveSpaceEveryNscans_ == 1)) {
+  if (map->points_.empty() || !(nScansInsertedMap_ % params.carveSpaceEveryNscans_ == 0)) {
     return;
   }
   //	Timer timer("carving");
@@ -139,7 +139,7 @@ void Submap::carve(const PointCloud& rawScan, const Transform& mapToRangeSensor,
   auto idxsToRemove = std::move(getIdxsOfCarvedPoints(*scan, *map, mapToRangeSensor.translation(), wideCroppedIdxs, params));
   toRemove_ = std::move(*(map->SelectByIndex(idxsToRemove)));
   scanRef_ = std::move(*scan);
-  //	std::cout << "Would remove: " << idxsToRemove.size() << std::endl;
+  // std::cout << "Would remove: " << idxsToRemove.size() << std::endl;
   removeByIds(idxsToRemove, map);
 }
 

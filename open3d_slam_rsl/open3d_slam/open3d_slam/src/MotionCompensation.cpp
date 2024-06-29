@@ -31,25 +31,34 @@ ConstantVelocityMotionCompensation::ConstantVelocityMotionCompensation(const Tra
 
 void ConstantVelocityMotionCompensation::estimateLinearAndAngularVelocity(const Time& timestamp, Eigen::Vector3d* linearVelocity,
                                                                           Eigen::Vector3d* angularVelocity) const {
+  linearVelocity->setZero();
+  angularVelocity->setZero();
   const int offset = params_.numPosesVelocityEstimation_;
   if (buffer_.size() <= offset) {
-    linearVelocity->setZero();
-    angularVelocity->setZero();
+    // linearVelocity->setZero();
+    // angularVelocity->setZero();
     return;
   }
 
   if (buffer_.latest_time() < timestamp) {
     const auto finish = buffer_.latest_measurement();
-    const auto start = buffer_.latest_measurement(offset);
+    const auto start = buffer_.latest_offseted_measurement(offset);
 
     const Transform dT = start.transform_.inverse() * finish.transform_;
     const double dt = toSeconds(finish.time_ - start.time_);
-    assert_gt(dt, 0.0, "dt should be > 0!!!!");
-    //			std::cout << "dt " << dt << std::endl;
-    const Eigen::Vector3d linearVelocitySensor = dT.translation() / (dt + 1e-6);
-    const Eigen::Vector3d angularVelocitySensor = toRPY(Eigen::Quaterniond(dT.rotation()).normalized()) / (dt + 1e-6);
-    *linearVelocity = linearVelocitySensor;
-    *angularVelocity = angularVelocitySensor;
+    // assert_gt(dt, 0.0, "dt should be > 0!!!!");
+    // std::cout << "dt " << dt << std::endl;
+    // std::cout << "offset " << offset << std::endl;
+
+    if (dt > 0.0) {
+      const Eigen::Vector3d linearVelocitySensor = dT.translation() / (dt + 1e-6);
+      const Eigen::Vector3d angularVelocitySensor = toRPY(Eigen::Quaterniond(dT.rotation()).normalized()) / (dt + 1e-6);
+      *linearVelocity = linearVelocitySensor;
+      *angularVelocity = angularVelocitySensor;
+    } else {
+      std::cout << "Velocity Calculation for undistorstion was 0.0, skipping for now. \n";
+    }
+
   } else {
     // todo handle this case!!!!!
     std::cout << "Warning buffer has this already!!!! \n";

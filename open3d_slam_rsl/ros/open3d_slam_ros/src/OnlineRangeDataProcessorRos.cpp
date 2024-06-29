@@ -105,15 +105,15 @@ void OnlineRangeDataProcessorRos::startProcessing() {
   slam_->startWorkers();
 
   // The point cloud subscriber
-  cloudSubscriber_ = nh_->subscribe(cloudTopic_, 2, &OnlineRangeDataProcessorRos::cloudCallback, this, ros::TransportHints().tcpNoDelay());
+  cloudSubscriber_ = nh_->subscribe(cloudTopic_, 1, &OnlineRangeDataProcessorRos::cloudCallback, this, ros::TransportHints().tcpNoDelay());
 
   // Redundant listening of pose topics. It is really tiresome to the developer to keep the support for all types.
   poseStampedSubscriber_ =
-      nh_->subscribe(poseStampedTopic_, 40, &OnlineRangeDataProcessorRos::poseStampedCallback, this, ros::TransportHints().tcpNoDelay());
+      nh_->subscribe(poseStampedTopic_, 1, &OnlineRangeDataProcessorRos::poseStampedCallback, this, ros::TransportHints().tcpNoDelay());
   odometrySubscriber_ =
-      nh_->subscribe(odometryTopic_, 40, &OnlineRangeDataProcessorRos::odometryCallback, this, ros::TransportHints().tcpNoDelay());
+      nh_->subscribe(odometryTopic_, 1, &OnlineRangeDataProcessorRos::odometryCallback, this, ros::TransportHints().tcpNoDelay());
   poseStampedCovarianceSubscriber_ =
-      nh_->subscribe(poseStampedWithCovarianceTopic_, 40, &OnlineRangeDataProcessorRos::poseStampedWithCovarianceCallback, this,
+      nh_->subscribe(poseStampedWithCovarianceTopic_, 1, &OnlineRangeDataProcessorRos::poseStampedWithCovarianceCallback, this,
                      ros::TransportHints().tcpNoDelay());
 
   if (slam_->isIMUattitudeInitializationEnabled()) {
@@ -172,12 +172,12 @@ void OnlineRangeDataProcessorRos::staticTfCallback(const ros::TimerEvent&) {
       odomPose_transformed.pose.orientation.x = 0.0;
       ROS_INFO("Initial Transform is set. Nice. The rotation is enforced to be identity.");
 
-      std::cout << " Initial Transform value PRE CALIB: "
-                << "\033[92m" << o3d_slam::asString(latestOdomMeasurement.transform_) << "\n "
-                << "\033[0m";
-      std::cout << " Initial Transform time: "
-                << "\033[92m" << toString(latestOdomMeasurement.time_) << " \n"
-                << "\033[0m";
+      // std::cout << " Initial Transform value PRE CALIB: "
+      //           << "\033[92m" << o3d_slam::asString(latestOdomMeasurement.transform_) << "\n "
+      //           << "\033[0m";
+      // std::cout << " Initial Transform time: "
+      //           << "\033[92m" << toString(latestOdomMeasurement.time_) << " \n"
+      //           << "\033[0m";
 
       if (!slam_->isUseExistingMapEnabled()) {
         // slam_->setInitialTransform(o3d_slam::getTransform(odomPose_transformed.pose).matrix());
@@ -360,7 +360,7 @@ void OnlineRangeDataProcessorRos::processOdometry(const Transform& transform, co
   if (slam_->isUsingOdometryTopic()) {
     // Add pose to buffer
     if (!slam_->addOdometryPoseToBuffer(transform, timestamp)) {
-      ROS_WARN_STREAM("Failed to add odometry pose to buffer. Exiting.");
+      // ROS_WARN_STREAM("Failed to add odometry pose to buffer. Exiting.");
       return;
     }
 

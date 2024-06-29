@@ -120,6 +120,10 @@ size_t SlamWrapper::getMappingBufferSizeLimit() const {
 
 void SlamWrapper::appendPoseToTrackedPath(geometry_msgs::PoseStamped transform) {
   mapper_->trackedPath_.poses.push_back(transform);
+
+  if (mapper_->trackedPath_.poses.size() > 3000) {
+    mapper_->trackedPath_.poses.erase(mapper_->trackedPath_.poses.begin());
+  }
 }
 
 bool SlamWrapper::isExternalOdometryFrameToCloudFrameCalibrationSet() {
@@ -137,9 +141,13 @@ Transform SlamWrapper::getExternalOdometryFrameToCloudFrameCalibration() {
 
 void SlamWrapper::appendPoseToBestGuessPath(geometry_msgs::PoseStamped transform) {
   mapper_->bestGuessPath_.poses.push_back(transform);
+
+  if (mapper_->bestGuessPath_.poses.size() > 3000) {
+    mapper_->bestGuessPath_.poses.erase(mapper_->bestGuessPath_.poses.begin());
+  }
 }
 
-bool SlamWrapper::addOdometryPoseToBuffer(const Transform& transform, const Time& timestamp) const {
+bool SlamWrapper::addOdometryPoseToBuffer(const Transform& transform, const Time& timestamp) {
   // if (!(isUsingOdometryTopic()) || odometry_->odomToRangeSensorBuffer_.has(timestamp)) {
   //   std::cout << "WARNING: you are trying to add an odometry pose to the buffer, but the buffer already has it! \n";
   //   std::cout << "The timestamp is: " << toSecondsSinceFirstMeasurement(timestamp) << std::endl;
@@ -155,7 +163,14 @@ bool SlamWrapper::addOdometryPoseToBuffer(const Transform& transform, const Time
   if (!odometryBuffer_.empty()) {
     const auto latestTime = odometryBuffer_.peek_back().time_;
     if (timestamp < latestTime) {
-      std::cerr << "You are trying to add a pose odometry measurement out of order! Its okay at the start. Dropping the measurement! \n";
+      if (std::abs(toSecondsSinceFirstMeasurement(timestamp) - toSecondsSinceFirstMeasurement(latestTime)) > 0.1) {
+        std::cerr
+            << "You are trying to add a pose odometry measurement out of order! There is a newer point cloud but you are trying to add "
+               "a pose from the past. Its okay at the start. Dropping the measurement! \n";
+
+        std::cout << "The timestamp is: " << toSecondsSinceFirstMeasurement(timestamp) << std::endl;
+        std::cout << "latestTime is: " << toSecondsSinceFirstMeasurement(latestTime) << std::endl;
+      }
       return false;
     }
   }
@@ -163,10 +178,30 @@ bool SlamWrapper::addOdometryPoseToBuffer(const Transform& transform, const Time
   if (!odometry_->odomToRangeSensorBuffer_.empty()) {
     const auto latestAvailableOdometryTime = odometry_->odomToRangeSensorBuffer_.latest_time();
     if (timestamp < latestAvailableOdometryTime) {
-      std::cerr << "You are trying to add a pose odometry measurement out of order! Its okay. Dropping the measurement. \n";
-      return false;
+      ++faultyOdometryCounter_;
+
+      if (faultyOdometryCounter_ > 50) {
+        std::cout
+            << "You are trying to add a pose odometry measurement out of order! Its okay, maybe ROS buffer is struggling. Dropping the "
+               "measurement. \n";
+        std::cout << "The timestamp is: " << toSecondsSinceFirstMeasurement(timestamp) << std::endl;
+        std::cout << "latestAvailableOdometryTime is: " << toSecondsSinceFirstMeasurement(latestAvailableOdometryTime) << std::endl;
+
+        return false;
+      }
+
+      if (std::abs(toSecondsSinceFirstMeasurement(timestamp) - toSecondsSinceFirstMeasurement(latestAvailableOdometryTime)) > 0.2) {
+        std::cout
+            << "You are trying to add a pose odometry measurement out of order! Its okay, maybe ROS buffer is struggling. Dropping the "
+               "measurement. \n";
+        std::cout << "The timestamp is: " << toSecondsSinceFirstMeasurement(timestamp) << std::endl;
+        std::cout << "latestAvailableOdometryTime is: " << toSecondsSinceFirstMeasurement(latestAvailableOdometryTime) << std::endl;
+        return false;
+      }
     }
   }
+
+  faultyOdometryCounter_ = 0;
 
   // std::cout << "The odometry transform time I am trying to add is: " <<  o3d_slam::toSecondsSinceFirstMeasurement(timestamp) << std::endl
   // ;
@@ -606,7 +641,7 @@ void SlamWrapper::unifiedWorkerOdom() {
 
     // Odometry has failed, often not expected.
     if (!isOdomOkay) {
-      std::cerr << "WARNING: odometry has failed!!!! \n";
+      // std::cerr << "WARNING: odometry has failed!!!! \n";
       continue;
     }
 
@@ -630,7 +665,13 @@ void SlamWrapper::unifiedWorkerMap() {
       std::this_thread::sleep_for(std::chrono::milliseconds(1));
       continue;
     }
-    TimestampedPointCloud measurement_map = mappingBuffer_.pop();
+    TimestampedPointCloud measurement_map;  // = mappingBuffer_.pop();
+    {
+      const TimestampedPointCloud raw = mappingBuffer_.pop();
+      auto undistortedCloud = motionCompensationMap_->undistortInputPointCloud(raw.cloud_, raw.time_);
+      measurement_map.time_ = raw.time_;
+      measurement_map.cloud_ = *undistortedCloud;
+    }
 
     doesOdometrybufferHasMeasurement(measurement_map.time_);
 
@@ -749,7 +790,6 @@ void SlamWrapper::odometryWorker() {
     // odometryStatisticsTimer_.startStopwatch();
     const TimestampedPointCloud measurement = odometryBuffer_.pop();
     auto undistortedCloud = motionCompensationOdom_->undistortInputPointCloud(measurement.cloud_, measurement.time_);
-
     const auto isOdomOkay = odometry_->addRangeScan(*undistortedCloud, measurement.time_);
 
     // this ensures that the odom is always ahead of the mapping
@@ -997,7 +1037,6 @@ void SlamWrapper::denseMapWorker() {
 }
 
 void SlamWrapper::computeFeaturesIfReady() {
-  // std::cout << "Finished number of submaps: " << submaps_->numFinishedSubmaps() << std::endl;
   // std::cout << "Is computing features: " << submaps_->isComputingFeatures() << std::endl;
   if (submaps_->numFinishedSubmaps() > 0 && !submaps_->isComputingFeatures()) {
     computeFeaturesResult_ = std::async(std::launch::async, [this]() {

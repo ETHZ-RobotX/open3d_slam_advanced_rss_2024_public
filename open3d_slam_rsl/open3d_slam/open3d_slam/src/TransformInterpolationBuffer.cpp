@@ -32,11 +32,11 @@ void TransformInterpolationBuffer::push(const Time& time, const Transform& tf) {
     }
 
     if (time < latest_time()) {
-      std::cerr
-          << "TransformInterpolationBuffer:: you are trying to push something out of order, this can only happen in the beginning. \n";
-      std::cerr << "ignoring this mesurement \n";
-      std::cerr << "Time: " << toSecondsSinceFirstMeasurement(time) << std::endl;
-      std::cerr << "latest time: " << toSecondsSinceFirstMeasurement(latest_time()) << std::endl;
+      // std::cerr
+      //     << "TransformInterpolationBuffer:: you are trying to push something out of order, this can only happen in the beginning. \n";
+      // std::cerr << "ignoring this mesurement \n";
+      // std::cerr << "Time: " << toSecondsSinceFirstMeasurement(time) << std::endl;
+      // std::cerr << "latest time: " << toSecondsSinceFirstMeasurement(latest_time()) << std::endl;
       return;
     }
   }
@@ -188,7 +188,9 @@ void TransformInterpolationBuffer::printTimesCurrentlyInBuffer() const {
 
 Transform getTransform(const Time& time, const TransformInterpolationBuffer& buffer) {
   if (time < buffer.earliest_time()) {
-    std::cerr << "TransformInterpolationBuffer:: you are trying to get a transform that is in the past, this should not happen \n";
+    if (toSecondsSinceFirstMeasurement(buffer.earliest_time()) > 1.0) {
+      std::cout << "TransformInterpolationBuffer:: you are trying to get a transform that is in the past, this should not happen \n";
+    }
     return buffer.lookup(buffer.earliest_time());
   }
   if (time > buffer.latest_measurement().time_) {

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 ## Source: https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 #add_compile_options(-Wall -Wextra -Wpedantic -O3)
-add_compile_options(-O3)
+add_compile_options(-Wno-dev -O3)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -99,7 +99,17 @@ target_link_libraries(${PROJECT_NAME}
 add_executable(mapping_node
   src/mapping_node.cpp)
 
+  add_executable(visualizer_node
+  src/visualizer_node.cpp)
+  
 target_link_libraries(mapping_node
+  ${catkin_LIBRARIES}
+  ${gflags_LIBRARIES}
+  ${GLOG_LIBRARIES}
+  ${PROJECT_NAME}
+  )
+
+  target_link_libraries(visualizer_node 
   ${catkin_LIBRARIES}
   ${gflags_LIBRARIES}
   ${GLOG_LIBRARIES}

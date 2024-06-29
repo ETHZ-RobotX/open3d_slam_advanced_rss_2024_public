@@ -78,34 +78,41 @@ void SlamWrapperRos::odomPublisherWorker() {
       return transformMsg;
     };
 
-    auto getOdomMsg = [](const geometry_msgs::TransformStamped& transformMsg) {
-      nav_msgs::Odometry odomMsg;
-      odomMsg.header = transformMsg.header;
-      odomMsg.child_frame_id = transformMsg.child_frame_id;
-      odomMsg.pose.pose.orientation = transformMsg.transform.rotation;
-      odomMsg.pose.pose.position.x = transformMsg.transform.translation.x;
-      odomMsg.pose.pose.position.y = transformMsg.transform.translation.y;
-      odomMsg.pose.pose.position.z = transformMsg.transform.translation.z;
-      return odomMsg;
-    };
+    // auto getOdomMsg = [](const geometry_msgs::TransformStamped& transformMsg) {
+    //   nav_msgs::Odometry odomMsg;
+    //   odomMsg.header = transformMsg.header;
+    //   odomMsg.child_frame_id = transformMsg.child_frame_id;
+    //   odomMsg.pose.pose.orientation = transformMsg.transform.rotation;
+    //   odomMsg.pose.pose.position.x = transformMsg.transform.translation.x;
+    //   odomMsg.pose.pose.position.y = transformMsg.transform.translation.y;
+    //   odomMsg.pose.pose.position.z = transformMsg.transform.translation.z;
+    //   return odomMsg;
+    // };
 
-    const Time latestScanToScan = latestScanToScanRegistrationTimestamp_;
-    const bool isAlreadyPublished = latestScanToScan == prevPublishedTimeScanToScanOdom_;
-    if (!isAlreadyPublished && odometry_->hasProcessedMeasurements()) {
-      const Transform T = odometry_->getOdomToRangeSensor(latestScanToScan);
-      geometry_msgs::TransformStamped transformMsg = getTransformMsg(T, latestScanToScan);
-      nav_msgs::Odometry odomMsg = getOdomMsg(transformMsg);
-      publishIfSubscriberExists(transformMsg, scan2scanTransformPublisher_);
-      publishIfSubscriberExists(odomMsg, scan2scanOdomPublisher_);
-      prevPublishedTimeScanToScanOdom_ = latestScanToScan;
-    }
+    // const Time latestScanToScan = latestScanToScanRegistrationTimestamp_;
+    // const bool isAlreadyPublished = latestScanToScan == prevPublishedTimeScanToScanOdom_;
+    // if (!isAlreadyPublished && odometry_->hasProcessedMeasurements()) {
+    //   const Transform T = odometry_->getOdomToRangeSensor(latestScanToScan);
+    //   geometry_msgs::TransformStamped transformMsg = getTransformMsg(T, latestScanToScan);
+    //   nav_msgs::Odometry odomMsg = getOdomMsg(transformMsg);
+    //   publishIfSubscriberExists(transformMsg, scan2scanTransformPublisher_);
+    //   publishIfSubscriberExists(odomMsg, scan2scanOdomPublisher_);
+    //   prevPublishedTimeScanToScanOdom_ = latestScanToScan;
+    // }
 
     const Time latestScanToMap = latestScanToMapRefinementTimestamp_;
     const bool isScanToMapAlreadyPublished = latestScanToMap == prevPublishedTimeScanToMapOdom_;
     if (!isScanToMapAlreadyPublished && mapper_->hasProcessedMeasurements()) {
       const Transform T = mapper_->getMapToRangeSensor(latestScanToMap);
       geometry_msgs::TransformStamped transformMsg = getTransformMsg(T, latestScanToMap);
-      nav_msgs::Odometry odomMsg = getOdomMsg(transformMsg);
+      nav_msgs::Odometry odomMsg;  // = getOdomMsg(transformMsg);
+      odomMsg.header = transformMsg.header;
+      odomMsg.child_frame_id = transformMsg.child_frame_id;
+      odomMsg.pose.pose.orientation = transformMsg.transform.rotation;
+      odomMsg.pose.pose.position.x = transformMsg.transform.translation.x;
+      odomMsg.pose.pose.position.y = transformMsg.transform.translation.y;
+      odomMsg.pose.pose.position.z = transformMsg.transform.translation.z;
+
       publishIfSubscriberExists(transformMsg, scan2mapTransformPublisher_);
 
       odomMsg.child_frame_id = frames_.rangeSensorFrame;
@@ -140,17 +147,17 @@ void SlamWrapperRos::offlineTfWorker() {
 void SlamWrapperRos::tfWorker() {
   ros::WallRate r(200.0);
   while (ros::ok()) {
-    const Time latestScanToScan = latestScanToScanRegistrationTimestamp_;
-    const bool isAlreadyPublished = latestScanToScan == prevPublishedTimeScanToScan_;
-    if ((!isAlreadyPublished) && (odometry_->hasProcessedMeasurements())) {
-      const Transform T = odometry_->getOdomToRangeSensor(latestScanToScan);
-      ros::Time timestamp = toRos(latestScanToScan);
-      // This distinguish the lidar frame in regular anymal tf and the re-publish by o3d.
-      // std::string appendedSensor = frames_.rangeSensorFrame + "_o3d";
-      o3d_slam::publishTfTransform(T.matrix().inverse(), timestamp, frames_.rangeSensorFrame, frames_.odomFrame, tfBroadcaster_.get());
-      // o3d_slam::publishTfTransform(T.matrix(), timestamp, frames_.mapFrame, "raw_odom_o3d", tfBroadcaster_.get());
-      prevPublishedTimeScanToScan_ = latestScanToScan;
-    }
+    // const Time latestScanToScan = latestScanToScanRegistrationTimestamp_;
+    // const bool isAlreadyPublished = latestScanToScan == prevPublishedTimeScanToScan_;
+    // if ((!isAlreadyPublished) && (odometry_->hasProcessedMeasurements())) {
+    //   const Transform T = odometry_->getOdomToRangeSensor(latestScanToScan);
+    //   ros::Time timestamp = toRos(latestScanToScan);
+    //   // This distinguish the lidar frame in regular anymal tf and the re-publish by o3d.
+    //   // std::string appendedSensor = frames_.rangeSensorFrame + "_o3d";
+    //   o3d_slam::publishTfTransform(T.matrix().inverse(), timestamp, frames_.rangeSensorFrame, frames_.odomFrame, tfBroadcaster_.get());
+    //   // o3d_slam::publishTfTransform(T.matrix(), timestamp, frames_.mapFrame, "raw_odom_o3d", tfBroadcaster_.get());
+    //   prevPublishedTimeScanToScan_ = latestScanToScan;
+    // }
 
     const Time latestScanToMap = latestScanToMapRefinementTimestamp_;
 
@@ -163,20 +170,20 @@ void SlamWrapperRos::tfWorker() {
       publishMapToOdomTf(latestScanToMap);
       prevPublishedTimeScanToMap_ = latestScanToMap;
 
-      if (trackedPathPub_.getNumSubscribers() > 0u || trackedPathPub_.isLatched()) {
-        mapper_->trackedPath_.header.stamp = o3d_slam::toRos(latestScanToMap);
-        mapper_->trackedPath_.header.frame_id = frames_.mapFrame;
-        trackedPathPub_.publish(mapper_->trackedPath_);
-      }
+      // if (trackedPathPub_.getNumSubscribers() > 0u || trackedPathPub_.isLatched()) {
+      //   mapper_->trackedPath_.header.stamp = o3d_slam::toRos(latestScanToMap);
+      //   mapper_->trackedPath_.header.frame_id = frames_.mapFrame;
+      //   trackedPathPub_.publish(mapper_->trackedPath_);
+      // }
 
-      if (bestGuessPathPub_.getNumSubscribers() > 0u || bestGuessPathPub_.isLatched()) {
-        mapper_->bestGuessPath_.header.stamp = o3d_slam::toRos(latestScanToMap);
-        mapper_->bestGuessPath_.header.frame_id = frames_.mapFrame;
-        bestGuessPathPub_.publish(mapper_->bestGuessPath_);
-      }
+      // if (bestGuessPathPub_.getNumSubscribers() > 0u || bestGuessPathPub_.isLatched()) {
+      //   mapper_->bestGuessPath_.header.stamp = o3d_slam::toRos(latestScanToMap);
+      //   mapper_->bestGuessPath_.header.frame_id = frames_.mapFrame;
+      //   bestGuessPathPub_.publish(mapper_->bestGuessPath_);
+      // }
 
-      // This function publishesh the lines that illustrate the corrections by the fine registration.
-      drawLinesBetweenPoses(mapper_->trackedPath_, mapper_->bestGuessPath_, toRos(latestScanToMap));
+      // // This function publishesh the lines that illustrate the corrections by the fine registration.
+      // drawLinesBetweenPoses(mapper_->trackedPath_, mapper_->bestGuessPath_, toRos(latestScanToMap));
     }
 
     ros::spinOnce();
@@ -224,6 +231,10 @@ void SlamWrapperRos::drawLinesBetweenPoses(const nav_msgs::Path& path1, const na
     line_list.points.push_back(p_end);
   }
 
+  if (line_list.points.size() > 3000) {
+    line_list.points.erase(line_list.points.begin());
+  }
+
   differenceLinePub_.publish(line_list);
 }
 
@@ -244,6 +255,21 @@ void SlamWrapperRos::visualizationWorker() {
 
     const Time scanToMapTimestamp = latestScanToMapRefinementTimestamp_;
     if (isTimeValid(scanToMapTimestamp)) {
+      if (trackedPathPub_.getNumSubscribers() > 0u || trackedPathPub_.isLatched()) {
+        mapper_->trackedPath_.header.stamp = o3d_slam::toRos(scanToMapTimestamp);
+        mapper_->trackedPath_.header.frame_id = frames_.mapFrame;
+        trackedPathPub_.publish(mapper_->trackedPath_);
+      }
+
+      if (bestGuessPathPub_.getNumSubscribers() > 0u || bestGuessPathPub_.isLatched()) {
+        mapper_->bestGuessPath_.header.stamp = o3d_slam::toRos(scanToMapTimestamp);
+        mapper_->bestGuessPath_.header.frame_id = frames_.mapFrame;
+        bestGuessPathPub_.publish(mapper_->bestGuessPath_);
+      }
+
+      // This function publishesh the lines that illustrate the corrections by the fine registration.
+      drawLinesBetweenPoses(mapper_->trackedPath_, mapper_->bestGuessPath_, toRos(scanToMapTimestamp));
+
       publishDenseMap(scanToMapTimestamp);
       publishMaps(scanToMapTimestamp);
       // std::cout << "republish" << params_.mapper_.republishMap_ << std::endl;
