@@ -25,10 +25,10 @@ params.mapper_localizer.is_refine_odometry_constraints_between_submaps = false
 params.mapper_localizer.is_carving_enabled = false
 params.mapper_localizer.scan_to_map_registration.scan_processing.voxel_size = 0.25
 params.mapper_localizer.scan_to_map_registration.scan_processing.downsampling_ratio = 1.0
-params.mapper_localizer.scan_to_map_registration.scan_processing.scan_cropping.cropping_radius_max = 15.0 --meters
+params.mapper_localizer.scan_to_map_registration.scan_processing.scan_cropping.cropping_radius_max = 25.0 --meters
 params.mapper_localizer.scan_to_map_registration.icp.max_correspondence_dist = 2.0 --NOT USED RIGHT NOW
 params.mapper_localizer.scan_to_map_registration.icp.knn = 10 --Currently only used for surface normal estimation.
-params.mapper_localizer.scan_to_map_registration.icp.max_distance_knn = 1.0 --Currently only used for surface normal estimation.
+params.mapper_localizer.scan_to_map_registration.icp.max_distance_knn = 0.5 --Currently only used for surface normal estimation.
 params.mapper_localizer.scan_to_map_registration.icp.reference_cloud_seting_period = 2.0 --Seconds
 
 --MAP_INITIALIZER
@@ -43,7 +43,7 @@ params.map_initializer.init_pose.pitch = 0.0
 params.map_initializer.init_pose.yaw = 120.0
 
 --SUBMAP
-params.submap.submap_size = 15.0 --meters
+params.submap.submap_size = 25.0 --meters
 params.submap.adjacency_based_revisiting_min_fitness = 0.5
 params.submap.min_seconds_between_feature_computation = 10.0
 params.submap.submaps_num_scan_overlap = 5 -- 200
