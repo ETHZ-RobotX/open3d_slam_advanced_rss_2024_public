@@ -247,31 +247,43 @@ void SlamWrapperRos::offlineVisualizationWorker() {
 void SlamWrapperRos::visualizationWorker() {
   ros::WallRate r(20.0);
   while (ros::ok()) {
-    const Time scanToScanTimestamp = latestScanToScanRegistrationTimestamp_;
-    if (odometryInputPub_.getNumSubscribers() > 0 && isTimeValid(scanToScanTimestamp)) {
-      const PointCloud odomInput = odometry_->getPreProcessedCloud();
-      o3d_slam::publishCloud(odomInput, frames_.rangeSensorFrame, toRos(scanToScanTimestamp), odometryInputPub_);
-    }
+    // const Time scanToScanTimestamp = latestScanToScanRegistrationTimestamp_;
+    // if (odometryInputPub_.getNumSubscribers() > 0 && isTimeValid(scanToScanTimestamp)) {
+    //   const PointCloud odomInput = odometry_->getPreProcessedCloud();
+    //   o3d_slam::publishCloud(odomInput, frames_.rangeSensorFrame, toRos(scanToScanTimestamp), odometryInputPub_);
+    // }
 
     const Time scanToMapTimestamp = latestScanToMapRefinementTimestamp_;
     if (isTimeValid(scanToMapTimestamp)) {
       if (trackedPathPub_.getNumSubscribers() > 0u || trackedPathPub_.isLatched()) {
-        mapper_->trackedPath_.header.stamp = o3d_slam::toRos(scanToMapTimestamp);
-        mapper_->trackedPath_.header.frame_id = frames_.mapFrame;
-        trackedPathPub_.publish(mapper_->trackedPath_);
+        {
+          const std::lock_guard<std::mutex> writeInBufferLock(publishMutex_);
+          mapper_->trackedPath_.header.stamp = o3d_slam::toRos(scanToMapTimestamp);
+          mapper_->trackedPath_.header.frame_id = frames_.mapFrame;
+          trackedPathPub_.publish(mapper_->trackedPath_);
+        }
       }
 
       if (bestGuessPathPub_.getNumSubscribers() > 0u || bestGuessPathPub_.isLatched()) {
-        mapper_->bestGuessPath_.header.stamp = o3d_slam::toRos(scanToMapTimestamp);
-        mapper_->bestGuessPath_.header.frame_id = frames_.mapFrame;
-        bestGuessPathPub_.publish(mapper_->bestGuessPath_);
+        {
+          const std::lock_guard<std::mutex> writeInBufferLock(publishMutex_);
+          mapper_->bestGuessPath_.header.stamp = o3d_slam::toRos(scanToMapTimestamp);
+          mapper_->bestGuessPath_.header.frame_id = frames_.mapFrame;
+          bestGuessPathPub_.publish(mapper_->bestGuessPath_);
+        }
       }
 
-      // This function publishesh the lines that illustrate the corrections by the fine registration.
-      drawLinesBetweenPoses(mapper_->trackedPath_, mapper_->bestGuessPath_, toRos(scanToMapTimestamp));
+      {
+        const std::lock_guard<std::mutex> writeInBufferLock(publishMutex_);
+        // This function publishesh the lines that illustrate the corrections by the fine registration.
+        drawLinesBetweenPoses(mapper_->trackedPath_, mapper_->bestGuessPath_, toRos(scanToMapTimestamp));
+      }
 
-      publishDenseMap(scanToMapTimestamp);
-      publishMaps(scanToMapTimestamp);
+      {
+        const std::lock_guard<std::mutex> writeInBufferLock(publishMutex_);
+        publishDenseMap(scanToMapTimestamp);
+        publishMaps(scanToMapTimestamp);
+      }
       // std::cout << "republish" << params_.mapper_.republishMap_ << std::endl;
       // std::cout << "initial" << params_.mapper_.isUseInitialMap_ << std::endl;
 

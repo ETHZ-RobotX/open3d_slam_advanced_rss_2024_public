@@ -72,6 +72,7 @@ class SlamWrapperRos : public SlamWrapper {
   std::thread tfWorker_, visualizationWorker_, odomPublisherWorker_;
   Time prevPublishedTimeScanToScan_, prevPublishedTimeScanToMap_;
   Time prevPublishedTimeScanToScanOdom_, prevPublishedTimeScanToMapOdom_;
+  std::mutex publishMutex_;
 };
 
 }  // namespace o3d_slam
