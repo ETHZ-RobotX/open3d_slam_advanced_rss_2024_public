@@ -269,8 +269,8 @@ Visualization Manager:
     - Alpha: 0.800000011920929
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 10.888337135314941
-        Min Value: -3.3772852420806885
+        Max Value: 9.225178718566895
+        Min Value: -0.9007316827774048
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -328,9 +328,7 @@ Visualization Manager:
       Name: Submap Markers
       Namespaces:
         submap_0: true
-        submap_1: true
         submap_id_0: true
-        submap_id_1: true
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -524,7 +522,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 25.748353958129883
+      Distance: 17.350664138793945
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -532,9 +530,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 5.796275615692139
-        Y: 9.76131820678711
-        Z: -8.724909782409668
+        X: -0.059913765639066696
+        Y: 0.42490774393081665
+        Z: -0.26215529441833496
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
