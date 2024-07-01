@@ -269,8 +269,8 @@ Visualization Manager:
     - Alpha: 0.800000011920929
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 9.225178718566895
-        Min Value: -0.9007316827774048
+        Max Value: 10.888337135314941
+        Min Value: -3.3772852420806885
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -328,7 +328,9 @@ Visualization Manager:
       Name: Submap Markers
       Namespaces:
         submap_0: true
+        submap_1: true
         submap_id_0: true
+        submap_id_1: true
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -391,7 +393,7 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 138; 226; 52
-      Enabled: false
+      Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.009999999776482582
@@ -410,12 +412,12 @@ Visualization Manager:
       Shaft Length: 0.10000000149011612
       Topic: /mapping/best_guess_path_live
       Unreliable: false
-      Value: false
+      Value: true
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
       Color: 32; 74; 135
-      Enabled: false
+      Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.009999999776482582
@@ -434,15 +436,15 @@ Visualization Manager:
       Shaft Length: 0.10000000149011612
       Topic: /mapping/tracked_path_live
       Unreliable: false
-      Value: false
+      Value: true
     - Class: rviz/Marker
-      Enabled: false
+      Enabled: true
       Marker Topic: /mapping/differenceLines
       Name: Motion Update Markers
       Namespaces:
-        {}
+        paths: true
       Queue Size: 100
-      Value: false
+      Value: true
     - Angle Tolerance: 0
       Class: rviz/Odometry
       Covariance:
@@ -522,7 +524,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 12.229159355163574
+      Distance: 25.748353958129883
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -530,17 +532,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: 5.796275615692139
+        Y: 9.76131820678711
+        Z: -8.724909782409668
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6653980016708374
+      Pitch: 0.915398120880127
       Target Frame: rslidar
-      Yaw: 1.978586196899414
+      Yaw: 1.0585870742797852
     Saved: ~
 Window Geometry:
   Displays:
